@@ -4,7 +4,10 @@ module Qutest
   # The origin queue object interface:
   #   pop            => return nil or the object in the queue
   #   push(message)  => push a message in queue
+  # The framework interface:
+  #   tests(name)    => return a list of test dump that can be push into origin queue
   class Queue < Struct.new(:origin, :framework)
+    # Enqueue tests loaded from given list files
     def <<(files)
       tests_from(files).each do |test|
         self.origin.push test
@@ -24,7 +27,7 @@ module Qutest
     end
 
     def load_tests(files)
-      Dir[files].each do |file|
+      files.each do |file|
         load file
       end
     end
