@@ -9,9 +9,6 @@ module Qutest
   FRAMEWORKS = {:test_unit => TestUnit}
 
   # Wrap a given origin queue as Qutest queue
-  # The origin queue object interface:
-  #   pop            => return nil or the object in the queue
-  #   push(message)  => push a message in queue
   def queue(origin, framework_name=DEFAULT_FRAMEWORK)
     Queue.new(origin, FRAMEWORKS[framework_name])
   end

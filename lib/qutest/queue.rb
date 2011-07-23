@@ -1,6 +1,9 @@
 module Qutest
 
   # The adapter between test frameworks and origin queue.
+  # The origin queue object interface:
+  #   pop            => return nil or the object in the queue
+  #   push(message)  => push a message in queue
   class Queue < Struct.new(:origin, :framework)
     def <<(files)
       tests_from(files).each do |test|
@@ -10,7 +13,7 @@ module Qutest
     alias :push :<<
 
     def pop
-      framework.decode(self.origin.pop)
+      self.origin.pop
     end
 
     private

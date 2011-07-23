@@ -1,9 +1,13 @@
-require 'qutest/test_unit/test_collector'
+require 'test/unit/collector/objectspace'
+
 require 'qutest/test_unit/qutest_suite'
 require 'qutest/test_unit/embedded_runner'
+require 'qutest/test_unit/marshal'
 
 module Qutest
   module TestUnit
+    extend Marshal
+
     def disable_auto_run
       if defined?(Test::Unit) && Test::Unit.respond_to?(:run=)
         Test::Unit.run = true
@@ -12,17 +16,7 @@ module Qutest
 
     def tests(name)
       disable_auto_run
-      TestCollector.new(name).collect
-    end
-
-    def encode(test)
-      "#{test.class.name}##{test.method_name}"
-    end
-
-    def decode(test)
-      return if test.nil?
-      class_name, method_name = test.split('#')
-      eval("#{class_name}", TOPLEVEL_BINDING).new(method_name)
+      dump Test::Unit::Collector::ObjectSpace.new.collect(name)
     end
 
     def run(queue, runner=:console)
