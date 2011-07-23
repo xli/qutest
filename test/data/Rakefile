@@ -1,0 +1,11 @@
+
+$LOAD_PATH << File.join(File.dirname(__FILE__), '..', '..', 'lib')
+require 'qutest'
+
+task :broadcast do
+  Qutest.memcached_queue << "#{File.dir(__FILE__)}/*_test.rb"
+end
+
+task :qutest do
+  Test::Unit::UI::Console::TestRunner.run(Qutest.memcached_queue.suite)
+end
