@@ -18,17 +18,16 @@ class KestrelQueueTest < Test::Unit::TestCase
   end
 
   def test_enqueue
-    @queue = Qutest.queue(Qutest.kestrel_queue('name'))
-    @queue << Dir["#{DIR_ROOT}/data/simple_test.rb"]
+    Qutest.kestrel_queue('name') << Dir["#{DIR_ROOT}/data/simple_test.rb"]
+
     expected = {'name' => ["SimpleTest#test_failed", "SimpleTest#test_simple"]}
     assert_equal(expected, Qutest.kestrel.store)
   end
 
   def test_dequeue
-    @queue = Qutest.queue(Qutest.kestrel_queue('name'))
-    @queue << Dir["#{DIR_ROOT}/data/simple_test.rb"]
+    Qutest.kestrel_queue('name') << Dir["#{DIR_ROOT}/data/simple_test.rb"]
+    result = Qutest.run(Qutest.kestrel_queue('name'), :name => :embedded)
 
-    result = Qutest.run(@queue, :name => :embedded)
     assert_equal "2 tests, 2 assertions, 1 failures, 0 errors", result.to_s
   end
 end

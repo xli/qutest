@@ -2,16 +2,10 @@ require 'qutest/kestrel/queue'
 
 module Qutest
   module Kestrel
-    def kestrel
-      @kestrel
-    end
-
-    def kestrel=(kestrel)
-      @kestrel = kestrel
-    end
+    attr_accessor :kestrel
 
     def kestrel_queue(name)
-      Queue.new(name)
+      queue(Queue.new(name))
     end
   end
 end
