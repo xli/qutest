@@ -20,11 +20,13 @@ class QutestTest < Test::Unit::TestCase
 
   def test_put_all_tests_in_queue
     @queue << "#{DIR_ROOT}/data/*_test.rb"
+    @queue.push "#{DIR_ROOT}/data/tests/*_test.rb"
     expected = [
       "InModule::SimpleTest#test_failed",
       "InModule::SimpleTest#test_simple",
       "SimpleTest#test_failed",
-      "SimpleTest#test_simple"
+      "SimpleTest#test_simple",
+      "AnotherTest#test_another"
     ]
     assert_equal expected, @origin
   end
@@ -37,9 +39,15 @@ class QutestTest < Test::Unit::TestCase
 
   def test_run_tests_in_queue
     @queue << "#{DIR_ROOT}/data/*_test.rb"
-    result = Test::Unit::TestResult.new
-    @queue.suite.run(result) {}
+    result = Qutest.run(@queue, :name => :embedded)
     assert_equal [], @origin
     assert_equal "4 tests, 4 assertions, 2 failures, 0 errors", result.to_s
+  end
+
+  def test_should_mark_test_unit_run_after_run_tests
+    @queue << "#{DIR_ROOT}/data/*_test.rb"
+    Test::Unit.run = false
+    result = Qutest.run(@queue, :name => :embedded)
+    assert Test::Unit.run?
   end
 end

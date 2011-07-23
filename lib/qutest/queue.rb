@@ -1,36 +1,29 @@
-require 'qutest/qutest_suite'
-
 module Qutest
-  class Queue < Struct.new(:origin, :test_collector)
+
+  # The adapter between test frameworks and origin queue.
+  class Queue < Struct.new(:origin, :framework)
     def <<(files)
       tests_from(files).each do |test|
         self.origin.push test
       end
     end
+    alias :push :<<
 
     def pop
-      test_collector.decode(self.origin.pop)
-    end
-
-    def suite
-      QutestSuite.new(self)
+      framework.decode(self.origin.pop)
     end
 
     private
+    def tests_from(files)
+      before_load_files_tests = framework.tests('before Qutest load files')
+      load_tests(files)
+      framework.tests('after Qutest load files') - before_load_files_tests
+    end
+
     def load_tests(files)
       Dir[files].each do |file|
         load file
       end
-    end
-
-    def tests_from(files)
-      before_load_files_tests = tests('before Qutest load files')
-      load_tests(files)
-      tests('after Qutest load files') - before_load_files_tests
-    end
-
-    def tests(name)
-      test_collector.collect(name)
     end
   end
 end
