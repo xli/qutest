@@ -4,6 +4,8 @@ require 'test/unit/testsuite'
 module Qutest
   module TestUnit
     module Marshal
+      # dump a suite to an array of string test case
+      # dump a test case to a string
       def dump(suite)
         case suite
         when Test::Unit::TestSuite
@@ -15,10 +17,13 @@ module Qutest
         end
       end
 
+      # load a test dump string data in source into a TestCase object
       def load(test)
         class_name, method_name = test.split('#')
         eval("#{class_name}", TOPLEVEL_BINDING).new(method_name)
       end
+
+      extend self
     end
   end
 end

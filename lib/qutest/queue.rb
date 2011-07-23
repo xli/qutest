@@ -15,6 +15,7 @@ module Qutest
     end
     alias :push :<<
 
+    # Dequeue test from origin
     def pop
       self.origin.pop
     end

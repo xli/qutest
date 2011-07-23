@@ -1,4 +1,5 @@
 require 'test/unit/collector/objectspace'
+require 'test/unit/ui/console/testrunner'
 
 require 'qutest/test_unit/qutest_suite'
 require 'qutest/test_unit/embedded_runner'
@@ -6,7 +7,11 @@ require 'qutest/test_unit/marshal'
 
 module Qutest
   module TestUnit
-    extend Marshal
+
+    RUNNERS = {
+      :console => Test::Unit::UI::Console::TestRunner,
+      :embedded => EmbeddedRunner
+    }
 
     def disable_auto_run
       if defined?(Test::Unit) && Test::Unit.respond_to?(:run=)
@@ -16,25 +21,14 @@ module Qutest
 
     def tests(name)
       disable_auto_run
-      dump Test::Unit::Collector::ObjectSpace.new.collect(name)
+      Marshal.dump Test::Unit::Collector::ObjectSpace.new.collect(name)
     end
 
-    def run(queue, runner=:console)
+    def run(queue, runner_name=:console)
       disable_auto_run
-      self[runner].run(QutestSuite.new(queue))
+      RUNNERS[runner_name].run(QutestSuite.new(queue))
     end
 
-    def [](runner)
-      case runner.to_s
-      when 'console'
-        Test::Unit::UI::Console::TestRunner
-      when 'embedded'
-        EmbeddedRunner
-      else
-        raise "Unsupported runner: #{runner.inspect}"
-      end
-    end
-
-    extend self
+    module_function :disable_auto_run, :tests, :run
   end
 end

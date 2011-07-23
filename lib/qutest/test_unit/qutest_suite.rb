@@ -1,3 +1,4 @@
+require 'qutest/test_unit/marshal'
 
 module Qutest
   module TestUnit
@@ -6,7 +7,7 @@ module Qutest
     class QutestSuite < Struct.new(:queue)
       def run(result, &progress_block)
         while(test = queue.pop) do
-          TestUnit.load(test).run(result, &progress_block)
+          Marshal.load(test).run(result, &progress_block)
         end
       end
     end
