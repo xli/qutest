@@ -4,6 +4,8 @@ require 'qutest'
 require 'rubygems'
 require 'memcache'
 
+Qutest::Kestrel::MemCacheExt.bind
+
 Qutest.kestrel = MemCache.new 'localhost:22133'
 
 task :broadcast do
@@ -15,4 +17,9 @@ task :qutest do
     load f
   end
   Qutest.run(Qutest.kestrel_queue('queue_name'))
+end
+
+require 'pp'
+task :stats do
+  puts Qutest.kestrel.dump_stats
 end

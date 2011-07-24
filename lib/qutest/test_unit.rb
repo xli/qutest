@@ -1,6 +1,3 @@
-require 'test/unit/collector/objectspace'
-require 'test/unit/ui/console/testrunner'
-
 require 'qutest/test_unit/qutest_suite'
 require 'qutest/test_unit/embedded_runner'
 require 'qutest/test_unit/marshal'
@@ -9,8 +6,8 @@ module Qutest
   module TestUnit
 
     RUNNERS = {
-      :console => Test::Unit::UI::Console::TestRunner,
-      :embedded => EmbeddedRunner
+      :console => 'Test::Unit::UI::Console::TestRunner',
+      :embedded => 'EmbeddedRunner'
     }
 
     def disable_auto_run
@@ -20,13 +17,16 @@ module Qutest
     end
 
     def tests(name)
+      require 'test/unit/collector/objectspace'
       disable_auto_run
       Marshal.dump Test::Unit::Collector::ObjectSpace.new.collect(name)
     end
 
     def run(queue, runner_name=:console)
+      #lazy load testrunner to avoid auto run test at exit
+      require 'test/unit/ui/console/testrunner'
       disable_auto_run
-      RUNNERS[runner_name].run(QutestSuite.new(queue))
+      eval(RUNNERS[runner_name]).run(QutestSuite.new(queue))
     end
 
     module_function :disable_auto_run, :tests, :run

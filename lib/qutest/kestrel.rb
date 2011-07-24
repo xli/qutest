@@ -1,4 +1,5 @@
 require 'qutest/kestrel/queue'
+require 'qutest/kestrel/memcache_ext'
 
 module Qutest
   module Kestrel
