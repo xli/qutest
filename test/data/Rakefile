@@ -1,25 +1,3 @@
 
-$LOAD_PATH << File.join(File.dirname(__FILE__), '..', '..', 'lib')
-require 'qutest'
-require 'rubygems'
-require 'memcache'
-
-Qutest::Kestrel::MemCacheExt.bind
-
-Qutest.kestrel = MemCache.new 'localhost:22133'
-
-task :broadcast do
-  Qutest.kestrel_queue('queue_name') << Dir["#{File.dirname(__FILE__)}/*_test.rb"]
-end
-
-task :qutest do
-  Dir["#{File.dirname(__FILE__)}/*_test.rb"].each do |f|
-    load f
-  end
-  Qutest.run(Qutest.kestrel_queue('queue_name'))
-end
-
-require 'pp'
-task :stats do
-  puts Qutest.kestrel.dump_stats
-end
+$LOAD_PATH << File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'lib'))
+require 'qutest/tasks/kestrel'
