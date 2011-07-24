@@ -20,7 +20,7 @@ module Qutest
       # load a test dump string data in source into a TestCase object
       def load(test)
         class_name, method_name = test.split('#')
-        eval("#{class_name}", TOPLEVEL_BINDING).new(method_name)
+        eval(class_name, TOPLEVEL_BINDING).new(method_name)
       end
 
       extend self

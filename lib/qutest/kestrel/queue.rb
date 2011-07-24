@@ -9,6 +9,10 @@ module Qutest
       def push(message)
         Qutest.kestrel.set(self.name, message)
       end
+
+      def to_s
+        "Kestrel[#{name}]"
+      end
     end
   end
 end

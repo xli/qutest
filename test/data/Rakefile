@@ -1,11 +1,18 @@
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), '..', '..', 'lib')
 require 'qutest'
+require 'rubygems'
+require 'memcache'
+
+Qutest.kestrel = MemCache.new 'localhost:22133'
 
 task :broadcast do
-  Qutest.kestrel_queue('queue_name') << "#{File.dir(__FILE__)}/*_test.rb"
+  Qutest.kestrel_queue('queue_name') << Dir["#{File.dirname(__FILE__)}/*_test.rb"]
 end
 
 task :qutest do
+  Dir["#{File.dirname(__FILE__)}/*_test.rb"].each do |f|
+    load f
+  end
   Qutest.run(Qutest.kestrel_queue('queue_name'))
 end

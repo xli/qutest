@@ -13,7 +13,7 @@ class KestrelQueueTest < Test::Unit::TestCase
 
   def teardown
     Object.module_eval do
-      remove_const(:SimpleTest)
+      remove_const(:SimpleTest) if defined?(SimpleTest)
     end
   end
 
@@ -29,5 +29,10 @@ class KestrelQueueTest < Test::Unit::TestCase
     result = Qutest.run(Qutest.kestrel_queue('name'), :name => :embedded)
 
     assert_equal "2 tests, 2 assertions, 1 failures, 0 errors", result.to_s
+  end
+
+  def test_pp_to_s
+    queue = Qutest.kestrel_queue('queue_name')
+    assert_equal "QutestSuite from Queue[Kestrel[queue_name]]", Qutest::TestUnit::QutestSuite.new(queue).to_s
   end
 end

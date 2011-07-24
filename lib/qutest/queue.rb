@@ -20,6 +20,10 @@ module Qutest
       self.origin.pop
     end
 
+    def to_s
+      "Queue[#{origin}]"
+    end
+
     private
     def tests_from(files)
       before_load_files_tests = framework.tests('before Qutest load files')

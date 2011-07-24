@@ -10,6 +10,10 @@ module Qutest
           Marshal.load(test).run(result, &progress_block)
         end
       end
+
+      def to_s
+        "QutestSuite from #{queue}"
+      end
     end
   end
 end
