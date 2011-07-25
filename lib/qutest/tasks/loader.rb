@@ -18,9 +18,10 @@ module Qutest
           case name
           when 'enqueue'
             start = Time.now
+            puts "Enqueuing: #{files.join(", ")}"
             Qutest.kestrel_queue(queue_name).push files do |total, index, test|
               if index == 0
-                puts "Total: #{total}"
+                puts "Total Test Cases: #{total}"
               end
               print '.'
             end
