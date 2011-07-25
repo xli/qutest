@@ -13,8 +13,8 @@ class KestrelTaskTest < Test::Unit::TestCase
 
   def test_test_task_ruby_script
     task = Qutest::Tasks::Kestrel.new('server', ['test'])
-    r = task.test('queue_name', ['file1', 'file2'])
-    expected = %{-I"test" #{loader_path.inspect} test "server" "queue_name" "file1" "file2"}
+    r = task.test('queue_name', ['*_test.rb', 'file2'])
+    expected = %{-I"test" #{loader_path.inspect} test "server" "queue_name" "*_test.rb" "file2"}
     assert_equal expected, r
   end
 
@@ -30,6 +30,18 @@ class KestrelTaskTest < Test::Unit::TestCase
     r = task.dump_stats
     expected = %{#{loader_path.inspect} dump_stats "server"}
     assert_equal expected, r
+  end
+
+  def test_parse_argv
+    task = Qutest::Tasks::Kestrel.new('server', ['test'])
+    cmd = task.test('queue_name', ['*_test.rb', 'file2'])
+    command = Qutest::Tasks::Kestrel::Command.parse(['test', 'server', 'queue name', '*_test.rb', '*.rb', 'data/*_test.rb'])
+
+    assert_equal 'test', command.name
+    assert_equal 'server', command.server
+    assert_equal 'queue name', command.queue_name
+    files = Dir["*.rb"] + Dir['data/*_test.rb']
+    assert_equal files.sort, command.files.sort
   end
 
   def loader_path
