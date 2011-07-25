@@ -8,8 +8,12 @@ module Qutest
   #   tests(name)    => return a list of test dump that can be push into origin queue
   class Queue < Struct.new(:origin, :framework)
     # Enqueue tests loaded from given list files
-    def <<(files)
-      tests_from(files).each do |test|
+    def <<(files, &block)
+      tests = tests_from(files)
+      tests.each_with_index do |test, index|
+        if block_given?
+          yield tests.size, index, test
+        end
         self.origin.push test
       end
     end

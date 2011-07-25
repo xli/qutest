@@ -1,0 +1,31 @@
+
+= Qutest
+
+Qutest publish & run tests through a queue system.
+
+== Example
+
+Add the following code into your Rakefile
+
+  require 'qutest/tasks/kestrel'
+
+  kestrel_task = Qutest::Tasks::Kestrel.new('IP/HOST:22133' || 'localhost:22133', [])
+  #kestrel_task.libs << qutest_lib_path           # if qutest lib is not in load path of default ruby and rubygems
+  #kestrel_task.libs << memcache_client_lib_path  # if memcache client lib is not in load path of default ruby and rubygems
+
+  task :enqueue do
+    ruby kestrel_task.enqueue('queue_name', Dir['*_test.rb'])
+  end
+
+  task :test do
+    ruby kestrel_task.test('queue_name', Dir['*_test.rb'])
+  end
+
+  task :stats do
+    ruby kestrel_task.stats
+  end
+
+  task :dump_stats do
+    ruby kestrel_task.dump_stats
+  end
+

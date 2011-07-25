@@ -1,35 +1,49 @@
-require 'rubygems'
-require 'memcache'
-require 'qutest'
 
-KESTREL_SERVER = ENV['KESTREL_SERVER'] || 'localhost:22133'
-puts "Qutest connects to kestrel server: #{KESTREL_SERVER}"
-Qutest.kestrel = MemCache.new KESTREL_SERVER
+module Qutest
+  module Tasks
+    class Kestrel < Struct.new(:server, :libs)
+      def enqueue(queue_name, files)
+        working_on_queue('enqueue', queue_name, files)
+      end
 
-namespace :qutest do
-  namespace :kestrel do
-    desc %{publish tests to queue[queue_name,files_pattern]}
-    task :enqueue, :queue_name, :files_pattern do |task, args|
-      Qutest.kestrel_queue(args[:queue_name]) << Dir[args[:files_pattern]].tap{|files| puts "enqueuing #{files.join(', ')}"}
-    end
+      def test(queue_name, files)
+        working_on_queue('test', queue_name, files)
+      end
 
-    desc %{run test in queue[queue_name,files_pattern]}
-    task :test, :queue_name, :files_pattern do |task, args|
-      Dir[args[:files_pattern]].each { |f| require f }
-      Qutest.run(Qutest.kestrel_queue(args[:queue_name]))
-    end
+      def stats
+        command_script('stats')
+      end
 
-    desc 'checkout kestrel stats'
-    task :stats do
-      require 'pp'
-      pp Qutest.kestrel.stats
-    end
+      def dump_stats
+        command_script('dump_stats')
+      end
 
-    desc 'checkout kestrel dump stats'
-    task :dump_stats do
-      Qutest::Kestrel::MemCacheExt.bind
-      Qutest.kestrel.dump_stats.each do |server, stats|
-        puts "#{server} => #{stats}"
+      private
+      def command_script(cmd)
+        script = []
+        script << "-I#{lib_path.inspect}" if lib_path
+        script << kestrel_loader.inspect
+        script << cmd
+        script << server.inspect
+        script.join(' ')
+      end
+
+      def working_on_queue(cmd, queue_name, files)
+        script = []
+        script << command_script(cmd)
+        script << queue_name.inspect
+        script << files.collect{|f| f.inspect}.join(' ')
+        script.join(' ')
+      end
+
+      def lib_path
+        if self.libs && !self.libs.empty?
+          self.libs.join(File::PATH_SEPARATOR)
+        end
+      end
+
+      def kestrel_loader
+        File.expand_path(File.join(File.dirname(__FILE__), 'loader.rb'))
       end
     end
   end

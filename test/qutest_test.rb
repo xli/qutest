@@ -50,4 +50,18 @@ class QutestTest < Test::Unit::TestCase
     result = Qutest.run(@queue, :name => :embedded)
     assert Test::Unit.run?
   end
+
+  def test_should_be_able_to_monitor_enqueue_progress
+    progress = []
+    @queue.push Dir["#{DIR_ROOT}/data/*_test.rb"] do |total, index, test|
+      progress << [total, index, test]
+    end
+    expected = [
+      [4, 0, "InModule::SimpleTest#test_failed"],
+      [4, 1, "InModule::SimpleTest#test_simple"],
+      [4, 2, "SimpleTest#test_failed"],
+      [4, 3, "SimpleTest#test_simple"]
+    ]
+    assert_equal expected, progress
+  end
 end
