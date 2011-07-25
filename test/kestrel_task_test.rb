@@ -44,6 +44,17 @@ class KestrelTaskTest < Test::Unit::TestCase
     assert_equal files.sort, command.files.sort
   end
 
+  def test_parse_monitor_argv
+    task = Qutest::Tasks::Kestrel.new('server', ['test'])
+    cmd = task.test('queue_name', ['*_test.rb', 'file2'])
+    command = Qutest::Tasks::Kestrel::Command.parse(['stats', 'server'])
+
+    assert_equal 'stats', command.name
+    assert_equal 'server', command.server
+    assert_equal nil, command.queue_name
+    assert_equal [], command.files
+  end
+
   def loader_path
     File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'qutest', 'tasks', 'loader.rb'))
   end

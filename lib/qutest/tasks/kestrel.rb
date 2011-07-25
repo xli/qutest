@@ -4,7 +4,7 @@ module Qutest
     class Kestrel < Struct.new(:server, :libs)
       class Command < Struct.new(:name, :server, :queue_name, :files)
         def self.parse(argv)
-          files = argv[3..-1].inject([]) {|r, pattern| r << Dir[pattern]}.flatten.uniq
+          files = (argv[3..-1] || []).inject([]) {|r, pattern| r << Dir[pattern]}.flatten.uniq
           new(argv[0], argv[1], argv[2], files)
         end
       end
