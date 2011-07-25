@@ -14,12 +14,12 @@ module Qutest
       end
       module V150
         def dump_stats
-          raise MemCacheError, "No active servers" unless active?
+          raise ::MemCache::MemCacheError, "No active servers" unless active?
           server_stats = {}
 
           @servers.each do |server|
             sock = server.socket
-            raise MemCacheError, "No connection to server" if sock.nil?
+            raise ::MemCache::MemCacheError, "No connection to server" if sock.nil?
 
             value = nil
             begin
@@ -32,7 +32,7 @@ module Qutest
               server_stats["#{server.host}:#{server.port}"] = stats
             rescue SocketError, SystemCallError, IOError => err
               server.close
-              raise MemCacheError, err.message
+              raise ::MemCache::MemCacheError, err.message
             end
           end
 
@@ -41,7 +41,7 @@ module Qutest
       end
       module V185
         def dump_stats
-          raise MemCacheError, "No active servers" unless active?
+          raise ::MemCache::MemCacheError, "No active servers" unless active?
           server_stats = {}
 
           @servers.each do |server|
@@ -60,7 +60,7 @@ module Qutest
             end
           end
 
-          raise MemCacheError, "No active servers" if server_stats.empty?
+          raise ::MemCache::MemCacheError, "No active servers" if server_stats.empty?
           server_stats
         end
       end
