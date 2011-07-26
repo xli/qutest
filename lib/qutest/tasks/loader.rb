@@ -18,14 +18,15 @@ module Qutest
           case name
           when 'enqueue'
             start = Time.now
-            puts "Enqueuing: #{files.join(", ")}"
+            puts "Enqueuing: #{files.empty? ? '[]' : files.join(", ")}"
             Qutest.kestrel_queue(queue_name).push files do |total, index, test|
               if index == 0
-                puts "Total Test Cases: #{total}"
+                puts "Files loaded: #{Time.now - start} seconds"
+                puts "#{total} tests"
               end
               print '.'
             end
-            puts "\nDone: #{Time.now - start} seconds"
+            puts "\nFinished in #{Time.now - start} seconds"
           when 'test'
             files.each { |f| require f }
             Qutest.run(Qutest.kestrel_queue(queue_name))
