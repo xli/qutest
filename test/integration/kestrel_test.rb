@@ -25,8 +25,8 @@ class IntegrationTest < Test::Unit::TestCase
   def test_integrated_with_unit_test_and_kestrel
     Dir.chdir(File.join(TEST_DIR, 'data')) do
       output = %x[rake enqueue]
-      assert_equal 0, $?.exitstatus, output
-      assert_match /^4 tests, 4 assertions, 2 failures, 0 errors$/m, %x[rake test]
+      assert_equal(0, $?.exitstatus, output)
+      assert_match(/^4 tests, 4 assertions, 2 failures, 0 errors$/m, %x[rake test])
     end
   end
 
