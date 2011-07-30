@@ -22,14 +22,41 @@ class IntegrationTest < Test::Unit::TestCase
     FileUtils.rm_rf('kestrel.log')
   end
 
+  def test_tasks_defined_in_rakefile
+    within_test_data_dir do
+      output = %x[rake -T]
+      assert_match(/^rake qutest:enqueue:queue_name/m, output)
+      assert_match(/^rake qutest:run_test:queue_name/m, output)
+      assert_match(/^rake qutest:dump_stats/m, output)
+      assert_match(/^rake qutest:stats/m, output)
+    end
+  end
+
   def test_integrated_with_unit_test_and_kestrel
-    Dir.chdir(File.join(TEST_DIR, 'data')) do
+    within_test_data_dir do
       output = %x[rake enqueue]
       assert_equal(0, $?.exitstatus, output)
       assert_match(/^4 tests, 4 assertions, 2 failures, 0 errors$/m, %x[rake test])
     end
   end
 
+  def test_stats
+    within_test_data_dir do
+      output = %x[rake stats]
+      assert_equal(0, $?.exitstatus, output)
+    end
+  end
+
+  def test_dump_stats
+    within_test_data_dir do
+      output = %x[rake dump_stats]
+      assert_equal(0, $?.exitstatus, output)
+    end
+  end
+
+  def within_test_data_dir(&block)
+    Dir.chdir(File.join(TEST_DIR, 'data'), &block)
+  end
   def wait_until_kestrel(target)
     loop do
       if File.exists?('kestrel.log')

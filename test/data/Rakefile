@@ -6,22 +6,21 @@ kestrel_task = Qutest::Tasks::Kestrel.new('localhost:22133', [])
 kestrel_task.tag_with 'test/data'
 kestrel_task.qutest('queue_name' => '*_test.rb')
 
-desc 'enqueue'
-task :enqueue do
-  ruby kestrel_task.enqueue('queue_name')
+kestrel_task.define_tasks do |q, t|
+  lambda do
+    raise "What's this? #{q}" if q != 'queue_name'
+    t.call
+  end
 end
+
+desc 'enqueue'
+task :enqueue => 'qutest:enqueue:queue_name'
 
 desc 'run test'
-task :test do
-  ruby kestrel_task.run_test('queue_name')
-end
+task :test => 'qutest:run_test:queue_name'
 
 desc 'stats'
-task :stats do
-  ruby kestrel_task.stats
-end
+task :stats => 'qutest:stats'
 
 desc 'dump_stats'
-task :dump_stats do
-  ruby kestrel_task.dump_stats
-end
+task :dump_stats => 'qutest:dump_stats'
