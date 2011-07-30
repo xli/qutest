@@ -1,3 +1,4 @@
+CHANGELOG
 Manifest
 README.rdoc
 Rakefile
@@ -16,7 +17,9 @@ test/data/Rakefile
 test/data/in_module_test.rb
 test/data/simple_test.rb
 test/data/tests/another_test.rb
+test/integration/kestrel_test.rb
 test/kestrel_queue_test.rb
 test/kestrel_stub.rb
 test/kestrel_task_test.rb
 test/qutest_test.rb
+test/test_helper.rb

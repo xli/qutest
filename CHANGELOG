@@ -1,0 +1,4 @@
+v0.0.1
+- Kestrel support
+- 'test/unit' framework support
+- Enqueue tests and run test from queue
