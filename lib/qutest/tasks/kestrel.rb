@@ -9,6 +9,9 @@ module Qutest
       end
 
       class RakeTasks < Struct.new(:kestrel)
+        if defined?(Rake::DSL)
+          include Rake::DSL
+        end
         def define
           namespace :qutest do
             [:enqueue, :run_test].each do |target|
@@ -18,7 +21,7 @@ module Qutest
                   task queue_name do
                     t = lambda { ruby kestrel.send(target, queue_name) }
                     if block_given?
-                      t = yield(queue_name, t)
+                      t = yield("#{target}:#{queue_name}", t)
                     end
                     t.call
                   end

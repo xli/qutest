@@ -6,10 +6,10 @@ kestrel_task = Qutest::Tasks::Kestrel.new('localhost:22133', [])
 kestrel_task.tag_with 'test/data'
 kestrel_task.qutest('queue_name' => '*_test.rb')
 
-kestrel_task.define_tasks do |q, t|
+kestrel_task.define_tasks do |name, task_proc|
   lambda do
-    raise "What's this? #{q}" if q != 'queue_name'
-    t.call
+    raise "What's this? #{name}" unless ['enqueue:queue_name', 'run_test:queue_name'].include?(name)
+    task_proc.call
   end
 end
 
