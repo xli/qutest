@@ -28,11 +28,11 @@ module Qutest
 
             desc "Show kestrel server stats"
             task :stats do
-              kestrel.stats
+              ruby kestrel.stats
             end
             desc "Show kestrel server dump_stats"
             task :dump_stats do
-              kestrel.dump_stats
+              ruby kestrel.dump_stats
             end
           end
         end

@@ -44,6 +44,7 @@ class IntegrationTest < Test::Unit::TestCase
     within_test_data_dir do
       output = %x[rake stats]
       assert_equal(0, $?.exitstatus, output)
+      assert_match(/"localhost:22133"=>/m, output)
     end
   end
 
@@ -51,6 +52,7 @@ class IntegrationTest < Test::Unit::TestCase
     within_test_data_dir do
       output = %x[rake dump_stats]
       assert_equal(0, $?.exitstatus, output)
+      assert_match(/localhost:22133 =>/m, output)
     end
   end
 
