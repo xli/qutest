@@ -63,6 +63,19 @@ module Qutest
           raise ::MemCache::MemCacheError, "No active servers" if server_stats.empty?
           server_stats
         end
+
+        def shutdown
+          raise MemCacheError, 'No active servers' unless active?
+          begin
+            @servers.each do |server|
+              with_socket_management(server) do |socket|
+                socket.write "shutdown\r\n"
+              end
+            end
+          rescue IndexError => err
+            handle_error nil, err
+          end
+        end
       end
     end
   end

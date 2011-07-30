@@ -27,7 +27,7 @@ module Qutest
               print '.'
             end
             puts "\nFinished in #{Time.now - start} seconds"
-          when 'test'
+          when 'run_test'
             files.each { |f| require f }
             Qutest.run(Qutest.kestrel_queue(queue_name))
           when 'stats'

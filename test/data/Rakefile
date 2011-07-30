@@ -3,19 +3,25 @@ $LOAD_PATH << File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'li
 require 'qutest/tasks/kestrel'
 
 kestrel_task = Qutest::Tasks::Kestrel.new('localhost:22133', [])
+kestrel_task.tag_with 'test/data'
+kestrel_task.qutest('queue_name' => '*_test.rb')
 
+desc 'enqueue'
 task :enqueue do
-  ruby kestrel_task.enqueue('queue_name', Dir['*_test.rb'])
+  ruby kestrel_task.enqueue('queue_name')
 end
 
+desc 'run test'
 task :test do
-  ruby kestrel_task.test('queue_name', Dir['*_test.rb'])
+  ruby kestrel_task.run_test('queue_name')
 end
 
+desc 'stats'
 task :stats do
   ruby kestrel_task.stats
 end
 
+desc 'dump_stats'
 task :dump_stats do
   ruby kestrel_task.dump_stats
 end

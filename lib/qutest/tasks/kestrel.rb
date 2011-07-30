@@ -1,7 +1,7 @@
 
 module Qutest
   module Tasks
-    class Kestrel < Struct.new(:server, :libs)
+    class Kestrel < Struct.new(:server, :libs, :tags, :queue_files)
       class Command < Struct.new(:name, :server, :queue_name, :files)
         def self.parse(argv)
           files = (argv[3..-1] || []).inject([]) {|r, pattern| r << Dir[pattern]}.flatten.uniq
@@ -9,12 +9,22 @@ module Qutest
         end
       end
 
-      def enqueue(queue_name, files)
-        working_on_queue('enqueue', queue_name, files)
+      def tag_with(*tags)
+        self.tags ||= []
+        self.tags.concat(tags)
       end
 
-      def test(queue_name, files)
-        working_on_queue('test', queue_name, files)
+      def qutest(new_queue_files)
+        self.queue_files ||= {}
+        self.queue_files.merge! new_queue_files
+      end
+
+      def enqueue(queue_name)
+        working_on_queue('enqueue', queue_name, self.queue_files[queue_name])
+      end
+
+      def run_test(queue_name)
+        working_on_queue('run_test', queue_name, self.queue_files[queue_name])
       end
 
       def stats
@@ -26,6 +36,10 @@ module Qutest
       end
 
       private
+      def full_queue_name(name)
+        [name].concat(self.tags || []).join('_').gsub(/\W/, '_')
+      end
+
       def command_script(cmd)
         script = []
         script << "-I#{lib_path.inspect}" if lib_path
@@ -38,8 +52,8 @@ module Qutest
       def working_on_queue(cmd, queue_name, files)
         script = []
         script << command_script(cmd)
-        script << queue_name.inspect
-        script << files.collect{|f| f.inspect}.join(' ')
+        script << full_queue_name(queue_name).inspect
+        script << files.collect{|f| f.to_s.inspect}.join(' ')
         script.join(' ')
       end
 
