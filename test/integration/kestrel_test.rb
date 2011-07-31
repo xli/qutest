@@ -36,7 +36,9 @@ class IntegrationTest < Test::Unit::TestCase
     within_test_data_dir do
       output = %x[rake enqueue]
       assert_equal(0, $?.exitstatus, output)
-      assert_match(/^4 tests, 4 assertions, 2 failures, 0 errors$/m, %x[rake test])
+      output = %x[rake test]
+      assert_equal(1, $?.exitstatus, output)
+      assert_match(/^4 tests, 4 assertions, 2 failures, 0 errors$/m, output)
     end
   end
 

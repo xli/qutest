@@ -29,7 +29,7 @@ module Qutest
             puts "\nFinished in #{Time.now - start} seconds"
           when 'run_test'
             files.each { |f| require f }
-            Qutest.run(Qutest.kestrel_queue(queue_name))
+            Kernel.exit Qutest.run(Qutest.kestrel_queue(queue_name)).passed?
           when 'stats'
             require 'pp'
             pp Qutest.kestrel.stats
