@@ -4,7 +4,7 @@ Qutest publish & run tests in parallel through a queue system.
 
 == Example
 
-Add the following code into your Rakefile
+Define tasks in Rakefile
 
   require 'qutest/tasks/kestrel'
 
@@ -33,12 +33,20 @@ Add the following code into your Rakefile
 Then config your integration tool to run qutest tasks
 Here is an example using Go as build server.
 
-First, start a Kestrel server on Go server
+# First, start a Kestrel server on Go server
 
-Setup first stage to enqueue all the tests
-# qutest:enqueue:uf
-# qutest:enqueue:ac
+# Setup first stage to enqueue all the tests
 
-Then config next stage to have 2 jobs run on all agents
-# Job 1: qutest:run_test:uf
-# Job 2: qutest:run_test:ac
+## qutest:enqueue:uf
+
+## qutest:enqueue:ac
+
+# Then config next stage to have 2 jobs run on all agents
+
+## Job 1: qutest:run_test:uf
+
+## Job 2: qutest:run_test:ac
+
+= License
+
+MIT License
