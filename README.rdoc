@@ -1,7 +1,6 @@
-
 = Qutest
 
-Qutest publish & run tests through a queue system.
+Qutest publish & run tests in parallel through a queue system.
 
 == Example
 
@@ -9,23 +8,37 @@ Add the following code into your Rakefile
 
   require 'qutest/tasks/kestrel'
 
-  kestrel_task = Qutest::Tasks::Kestrel.new('IP/HOST:22133' || 'localhost:22133', [])
-  #kestrel_task.libs << qutest_lib_path           # if qutest lib is not in load path of default ruby and rubygems
-  #kestrel_task.libs << memcache_client_lib_path  # if memcache client lib is not in load path of default ruby and rubygems
+  kestrel_task = Qutest::Tasks::Kestrel.new('kestrel_server_ip_or_hostname:22133', [])
+  # kestrel_task.libs << qutest_lib_path           # if qutest lib is not in load path of default ruby and rubygems
+  # kestrel_task.libs << memcache_client_lib_path  # if memcache client lib is not in load path of default ruby and rubygems
+  # Tag queue so that can have can have many different processes running same task.
+  # Here is base on Go's pipeline name and label, so that you can have another pipeline run same tests on different platform
+  # and have same pipeline run tests on different version of codebase.
+  kestrel_task.tag_with 'Go', ENV['GO_PIPELINE_NAME'], ENV['GO_PIPELINE_LABEL']
+  # config qutest by given task name => test files pattern
+  # every one pair of this config will generate 2 tasks, one is enqueue:task_name another is run_test:task_name
+  kestrel_task.qutest(:uf => ['test/functional/**/*_test.rb', 'test/unit/**/*_test.rb'])
+  # config another task running acceptance tests
+  kestrel_task.qutest(:ac => ['test/acceptance/**/*_test.rb'])
 
-  task :enqueue do
-    ruby kestrel_task.enqueue('queue_name', Dir['*_test.rb'])
-  end
+  # define tasks:
+  #   qutest:enqueue:uf
+  #   qutest:enqueue:ac
+  #   qutest:run_test:uf
+  #   qutest:run_test:ac
+  #   qutest:stats
+  #   qutest:dump_stats
+  kestrel_task.define_tasks
 
-  task :test do
-    ruby kestrel_task.test('queue_name', Dir['*_test.rb'])
-  end
+Then config your integration tool to run qutest tasks
+Here is an example using Go as build server.
 
-  task :stats do
-    ruby kestrel_task.stats
-  end
+First, start a Kestrel server on Go server
 
-  task :dump_stats do
-    ruby kestrel_task.dump_stats
-  end
+Setup first stage to enqueue all the tests
+# qutest:enqueue:uf
+# qutest:enqueue:ac
 
+Then config next stage to have 2 jobs run on all agents
+# Job 1: qutest:run_test:uf
+# Job 2: qutest:run_test:ac
