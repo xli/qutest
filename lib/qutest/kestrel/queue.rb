@@ -1,3 +1,4 @@
+require 'qutest/retryable'
 
 module Qutest
   module Kestrel
@@ -13,6 +14,8 @@ module Qutest
       def to_s
         "Kestrel[#{name}]"
       end
+
+      retryable :pop, :push, {:tries => 3}
 
       private
       def hours(number)
