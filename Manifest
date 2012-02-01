@@ -1,4 +1,6 @@
 CHANGELOG
+Gemfile
+Gemfile.lock
 Manifest
 README.rdoc
 Rakefile
@@ -7,12 +9,14 @@ lib/qutest/kestrel.rb
 lib/qutest/kestrel/memcache_ext.rb
 lib/qutest/kestrel/queue.rb
 lib/qutest/queue.rb
+lib/qutest/retryable.rb
 lib/qutest/tasks/kestrel.rb
 lib/qutest/tasks/loader.rb
 lib/qutest/test_unit.rb
 lib/qutest/test_unit/embedded_runner.rb
 lib/qutest/test_unit/marshal.rb
 lib/qutest/test_unit/qutest_suite.rb
+qutest.gemspec
 test/data/Rakefile
 test/data/in_module_test.rb
 test/data/simple_test.rb
@@ -22,4 +26,5 @@ test/kestrel_queue_test.rb
 test/kestrel_stub.rb
 test/kestrel_task_test.rb
 test/qutest_test.rb
+test/retryable_test.rb
 test/test_helper.rb
