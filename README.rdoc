@@ -2,6 +2,7 @@
 
 Qutest publish & run tests in parallel through a queue system.
 
+
 == Example
 
 Define tasks in Rakefile
